@@ -1,2 +1,81 @@
 # otus_5
 Инициализация системы. Systemd и SysV
+1) Написать сервис, который будет раз в 30 секунд мониторить лог на предмет наличия ключевого слова. Файл и слово должны задаваться в ```/etc/sysconfig```
+
+Создаём файл с конфигурацией для сервиса в директории ```/etc/sysconfig``` - из неё сервис будет брать необходимые переменные.
+```
+cd /etc/sysconfig/
+vi watchlog
+```
+Содержимое файла
+```
+# Configuration file for my watchlog service
+# Place it to /etc/sysconfig
+# File and word in that file that we will be monit
+WORD="ALERT"
+LOG=/var/log/watchlog.log
+```
+Затем создаем /var/log/watchlog.log и пишем туда строки на своё усмотрение, плюс ключевое слово ‘ALERT’
+```
+cd /var/log/
+vi watchlog
+```
+Создадим скрипт watchlog.sh :
+```
+cd /opt/
+vi watchlog
+```
+Содержимое файла (команда logger отправляет лог в системный журнал):
+```
+#!/bin/bash
+WORD=$1
+LOG=$2
+DATE=`date`
+
+if grep $WORD $LOG &> /dev/null
+then
+   logger "$DATE: I found word, Master!"
+else
+   exit 0
+fi
+```
+Создадим юнит для сервиса:
+```
+cd /etc/systemd/system
+vi watchlog.service
+```
+Содержимое файла watchlog.service :
+```
+[Unit]
+Description=My watchlog service
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sysconfig/watchlog
+ExecStart=/opt/watchlog.sh $WORD $LOG
+```
+Создадим юнит для таймера:
+```
+vi watchlog.timer
+```
+Содержимое файла watchlog.timer:
+```
+[Unit]
+Description=Run watchlog script every 30 second
+
+[Timer]
+# Run every 30 second
+OnUnitActiveSec=30
+Unit=watchlog.service
+
+[Install]
+WantedBy=multi-user.target
+```
+Запускаем ~гуся, работяги~ timer:
+```
+systemctl start watchlog.timer
+```
+Проверить результат
+```
+tail -f /var/log/messages
+```
