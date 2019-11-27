@@ -79,3 +79,6 @@ systemctl start watchlog.timer
 ```
 tail -f /var/log/messages
 ```
+
+
+2) Из epel установитþ spawn-fcgi и переписать init-скрипт на unit-файл. Имя сервиса должно также называться.
