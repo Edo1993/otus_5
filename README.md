@@ -113,3 +113,6 @@ systemctl start spawn-fcgi
 systemctl status spawn-fcgi
 ```
 ![Image alt](https://github.com/Edo1993/otus_5/raw/master/22.png)
+
+3) Дополнить юнит-файл apache httpd возможностью запустить несколько инстансов сервера с разными конфигами
+
