@@ -82,3 +82,34 @@ tail -f /var/log/messages
 
 
 2) Из epel установитþ spawn-fcgi и переписать init-скрипт на unit-файл. Имя сервиса должно также называться.
+
+Устанавливаем spawn-fcgi и необходимые для него пакеты:
+```
+yum install epel-release -y && yum install spawn-fcgi php php-cli mod_fcgid httpd -y
+```
+Раскомментировать строки с переменными в /etc/sysconfig/spawn-fcgi, должен принять следующий вид
+
+![Image alt](https://github.com/Edo1993/otus_5/raw/master/21.png)
+Юнит файл имеет следующий вид ```vi /etc/systemd/system/spawn-fcgi.service```:
+```
+[Unit]
+Description=Spawn-fcgi startup service by Otus
+After=network.target
+
+[Service]
+Type=simple
+PIDFile=/var/run/spawn-fcgi.pid
+EnvironmentFile=/etc/sysconfig/spawn-fcgi
+ExecStart=/usr/bin/spawn-fcgi -n $OPTIONS
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+
+```
+Убеждаемся, что все успешно работает:
+```
+systemctl start spawn-fcgi
+systemctl status spawn-fcgi
+```
+![Image alt](https://github.com/Edo1993/otus_5/raw/master/22.png)
