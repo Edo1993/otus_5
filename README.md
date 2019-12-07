@@ -12,8 +12,8 @@ vi watchlog
 # Configuration file for my watchlog service
 # Place it to /etc/sysconfig
 # File and word in that file that we will be monit
-WORD="ALERT"
-LOG=/var/log/watchlog.log
+keyword="vm"
+logfile="/var/log/watchlog.log"
 ```
 Затем создаем /var/log/watchlog.log и пишем туда строки на своё усмотрение, плюс ключевое слово ‘ALERT’
 ```
@@ -28,16 +28,18 @@ vi watchlog
 Содержимое файла (команда logger отправляет лог в системный журнал):
 ```
 #!/bin/bash
-WORD=$1
-LOG=$2
-DATE=`date`
-
-if grep $WORD $LOG &> /dev/null
-then
-   logger "$DATE: I found word, Master!"
-else
-   exit 0
+if [[ ! "$logfile" ]]; then
+    echo "Please provide filename" >&2
+    exit 1
 fi
+
+if [[ ! "$keyword" ]]; then
+    echo "Please provide key word" >&2
+fi
+
+echo "Searching ${keyword} in ${logfile}"
+
+grep "$keyword" "$logfile"
 ```
 Создадим юнит для сервиса:
 ```
@@ -47,12 +49,16 @@ vi watchlog.service
 Содержимое файла watchlog.service :
 ```
 [Unit]
-Description=My watchlog service
+After=network.target
 
 [Service]
-Type=oneshot
 EnvironmentFile=/etc/sysconfig/watchlog
-ExecStart=/opt/watchlog.sh $WORD $LOG
+WorkingDirectory=/home/vagrant
+ExecStart=/bin/bash '/opt/watchlog.sh'
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
 ```
 Создадим юнит для таймера:
 ```
@@ -61,15 +67,14 @@ vi watchlog.timer
 Содержимое файла watchlog.timer:
 ```
 [Unit]
-Description=Run watchlog script every 30 second
+Description=Run every 30 seconds
 
 [Timer]
-# Run every 30 second
-OnUnitActiveSec=30
+OnCalendar=*-*-* *:*:00/30
 Unit=watchlog.service
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=timers.target
 ```
 Запускаем ~гуся, работяги~ timer:
 ```
