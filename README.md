@@ -84,7 +84,7 @@ tail -f /var/log/messages
 2) Из epel установить spawn-fcgi и переписать init-скрипт на unit-файл. Имя сервиса должно также называться.
 
 
-Здесь![Здесь](https://github.com/Edo1993/otus_5/tree/master/spawn) vargrantfile, скрипты - при разворачивании vm можно проверить, что всё поднялось корректно командой 
+[Здесь](https://github.com/Edo1993/otus_5/tree/master/spawn) vargrantfile, скрипты - при разворачивании vm можно проверить, что всё поднялось корректно командой 
 ```
 systemctl status spawn-fcgi
 ```
