@@ -4,6 +4,9 @@
 
 
 [Здесь](https://github.com/Edo1993/otus_5/tree/master/watchlog) vargrantfile, скрипты - при разворачивании vm можно проверить, что всё поднялось корректно командой 
+```
+systemctl status watchlog -l
+```
 Создаём файл с конфигурацией для сервиса в директории ```/etc/sysconfig``` - из неё сервис будет брать необходимые переменные.
 ```
 cd /etc/sysconfig/
@@ -135,3 +138,9 @@ systemctl status spawn-fcgi
 
 # 3) Дополнить юнит-файл apache httpd возможностью запустить несколько инстансов сервера с разными конфигами
 
+
+[Здесь](https://github.com/Edo1993/otus_5/tree/master/httpd) vargrantfile, скрипты - при разворачивании vm можно проверить, что всё поднялось корректно командой 
+```
+systemctl status httpd@httpd1.service
+systemctl status httpd@httpd2.service
+```
