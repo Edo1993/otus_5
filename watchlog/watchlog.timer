@@ -1,9 +1,0 @@
-[Unit]
-Description=Run every 30 seconds
-
-[Timer]
-OnCalendar=*-*-* *:*:00/30
-Unit=watchlog.service
-
-[Install]
-WantedBy=timers.target
