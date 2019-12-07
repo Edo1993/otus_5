@@ -14,7 +14,7 @@ vi watchlog
 # Configuration file for my watchlog service
 # Place it to /etc/sysconfig
 # File and word in that file that we will be monit
-keyword="vm"
+keyword="ALERT"
 logfile="/var/log/watchlog.log"
 ```
 Затем создаем /var/log/watchlog.log и пишем туда строки на своё усмотрение, плюс ключевое слово ‘ALERT’
@@ -30,6 +30,7 @@ vi watchlog
 Содержимое файла (команда logger отправляет лог в системный журнал):
 ```
 #!/bin/bash
+
 if [[ ! "$logfile" ]]; then
     echo "Please provide filename" >&2
     exit 1
@@ -72,7 +73,8 @@ vi watchlog.timer
 Description=Run every 30 seconds
 
 [Timer]
-OnCalendar=*-*-* *:*:00/30
+OnBootSec=1m
+OnUnitActiveSec=30s
 Unit=watchlog.service
 
 [Install]
@@ -80,13 +82,15 @@ WantedBy=timers.target
 ```
 Запускаем ~гуся, работяги~ timer:
 ```
+systemctl daemon-reload
+systemctl enable watchlog.service
+systemctl enable watchlog.timer
 systemctl start watchlog.timer
+systemctl list-timers --all
+systemctl status watchlog -l
 ```
-Проверить результат
-```
-tail -f /var/log/messages
-```
-
+картиночка, что всё работает
+![Image alt](https://github.com/Edo1993/otus_5/raw/master/111.png)
 
 # 2) Из epel установить spawn-fcgi и переписать init-скрипт на unit-файл. Имя сервиса должно также называться.
 
