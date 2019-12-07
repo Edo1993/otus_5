@@ -1,0 +1,10 @@
+[Unit]
+Description=Run every 30 seconds
+
+[Timer]
+OnBootSec=1m
+OnUnitActiveSec=30s
+Unit=watchlog.service
+
+[Install]
+WantedBy=timers.target

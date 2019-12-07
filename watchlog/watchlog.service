@@ -1,0 +1,11 @@
+[Unit]
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/sysconfig/watchlog
+WorkingDirectory=/home/vagrant
+ExecStart=/bin/bash '/opt/watchlog.sh'
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
